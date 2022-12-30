@@ -28,6 +28,8 @@ class CreateSettingsTable extends Migration
             $table->string('invoice_logo')->nullable();
             $table->string('signature')->nullable();
             $table->string('mail_account')->nullable();
+            $table->text('aade_user_id')->nullable();
+            $table->text('ocp_apim_subscription_key')->nullable();
             $table->timestamps();
         });
     }

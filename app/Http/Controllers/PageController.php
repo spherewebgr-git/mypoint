@@ -21,9 +21,11 @@ class PageController extends Controller
         $todayTime = $date->isoFormat('LLL');
         $unpaid = Invoice::query()->where('paid', '=', 0)->get();
 
+        $rss = file_get_contents('https://www.taxheaven.gr/bibliothiki/soft/xml/soft_dat.xml');
+
         $pageConfigs = ['pageHeader' => true];
 
-        return view('pages.dashboard', ['pageConfigs' => $pageConfigs, 'today' => $today, 'todayTime' => $todayTime, 'unpaid' => $unpaid]);
+        return view('pages.dashboard', ['pageConfigs' => $pageConfigs, 'today' => $today, 'todayTime' => $todayTime, 'unpaid' => $unpaid, 'feed' => $rss]);
     }
 
     public function collapsePage()

@@ -16,12 +16,17 @@ class CreateOutcomesTable extends Migration
         Schema::create('outcomes', function (Blueprint $table) {
             $table->id();
             $table->string('hashID')->unique();
-            $table->string('outcome_number');
-            $table->string('shop');
+            $table->string('seira')->nullable();
+            $table->integer('outcome_number')->nullable();
+            $table->string('shop')->nullable();
             $table->date('date');
             $table->float('price');
             $table->float('vat');
-            $table->string('file');
+            $table->string('invType')->nullable();
+            $table->string('mark')->nullable();
+            $table->string('file')->nullable();
+            $table->string('status')->nullable();
+            $table->integer('classified')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

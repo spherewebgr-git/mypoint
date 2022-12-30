@@ -176,7 +176,7 @@
                                 <i class="material-icons">close</i>
                             </div>
                         </div>
-                        @if(isset($task))
+
                         <!-- form start -->
                         <form action="{{route('tasks.store')}}" class="edit-todo-item mt-10 mb-10">
                             @csrf
@@ -198,13 +198,11 @@
 
                             <div class="input-field display-flex align-items-center">
                                 <i class="material-icons mr-5">contacts</i>
-                                @if(isset($clients))
                                 <select name="taskClient" class="browser-default select-tags select2-hidden-accessible">
                                     @foreach($clients as $client)
                                         <option value="{{$client->id}}">{{$client->company}}</option>
                                     @endforeach
                                 </select>
-                                @endif
 {{--                                <span class="select2 select2-container select2-container--default select2-container--disabled" dir="ltr" data-select2-id="2" style="width: 100%;">--}}
 {{--                                    <span class="selection"><span class="select2-selection select2-selection--multiple" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="-1" aria-disabled="true"><ul class="select2-selection__rendered"><li class="select2-search select2-search--inline"><input class="select2-search__field" type="search" tabindex="0" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" role="searchbox" aria-autocomplete="list" placeholder="" disabled="" style="width: 0.75em;"></li></ul></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>--}}
 {{--                                <i class="material-icons ml-5 tags-toggler cursor-pointer">add_circle_outline</i>--}}
@@ -240,7 +238,6 @@
                                 </div>
                             </div>
                         </form>
-                        @endif
                         <div class="card-action pl-0 pr-0 right-align">
                             <button class="btn-small waves-effect waves-light add-todo">
                                 <span>Προσθήκη Υπενθύμισης</span>

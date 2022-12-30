@@ -48,7 +48,7 @@ class RetailReceiptsController extends Controller
 
         $date = $requestDate->format('Y-m-d');
 
-        $vat = (24 / 100) * $request->price;
+        $vat = $request->price - ($request->price / 1.24);
 
         DB::table('retails')->insert(
             array(

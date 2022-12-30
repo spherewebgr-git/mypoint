@@ -15,16 +15,16 @@
   <div id="main">
     <div class="row">
       @if ($configData["navbarLarge"] === true)
-          @if(($configData["mainLayoutType"]) === 'vertical-modern-menu')
-              {{-- navabar large  --}}
-              <div
-                class="content-wrapper-before @if(!empty($configData['navbarBgColor'])) {{$configData['navbarBgColor']}} @else {{$configData["navbarLargeColor"]}} @endif">
-              </div>
-          @else
-              {{-- navabar large  --}}
-              <div class="content-wrapper-before {{$configData["navbarLargeColor"]}}">
-              </div>
-          @endif
+      @if(($configData["mainLayoutType"]) === 'vertical-modern-menu')
+      {{-- navabar large  --}}
+      <div
+        class="content-wrapper-before @if(!empty($configData['navbarBgColor'])) {{$configData['navbarBgColor']}} @else {{$configData["navbarLargeColor"]}} @endif">
+      </div>
+      @else
+      {{-- navabar large  --}}
+      <div class="content-wrapper-before {{$configData["navbarLargeColor"]}}">
+      </div>
+      @endif
       @endif
 
 

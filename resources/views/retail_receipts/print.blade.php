@@ -14,9 +14,11 @@
     <section class="print-retail-receipt-wrapper section">
         <div class="row retail-receipt">
             <div class="retail-receipt--head">
+                @if($settings->invoice_logo)
                 <div class="retail-receipt--head---logo center mb-1">
-                    <img src="{{asset('images/system/tim-logo.png')}}" alt="company logo" />
+                    <img src="{{url('/images/system/'.$settings->invoice_logo)}}" alt="company logo" />
                 </div>
+                @endif
                 <div class="retail-receipt--head---info">
                     <h4 class="center">Απόδειξη Παροχής<br />Υπηρεσιών Λιανικής</h4>
                     <p class="center">

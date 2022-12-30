@@ -16,6 +16,13 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
+      <webServer id="ac78c4c1-b8de-4ac1-a912-cfbae246d518" name="XythsFwtios" url="http://ftp.mypointapp.gr">
+        <fileTransfer host="ftp.mypointapp.gr" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

@@ -5,6 +5,7 @@
     <div class="nav-wrapper">
         @yield('header-left')
       <ul class="navbar-list right">
+
         <li class="hide-on-med-and-down">
           <a class="waves-effect waves-block waves-light toggle-fullscreen" href="javascript:void(0);">
             <i class="material-icons">settings_overscan</i>
@@ -30,6 +31,7 @@
           </a>
         </li>
       </ul>
+
       <!-- notifications-dropdown-->
       <ul class="dropdown-content" id="binDropdown">
         <li>
@@ -53,6 +55,7 @@
                   @endif
               </li>
           @endforeach
+
       </ul>
       <!-- profile-dropdown-->
       <ul class="dropdown-content" id="profile-dropdown">
@@ -73,3 +76,4 @@
     </div>
   </nav>
 </div>
+

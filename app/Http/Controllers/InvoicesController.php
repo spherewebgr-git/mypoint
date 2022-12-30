@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Invoice;
+use App\Models\Seires;
 use App\Models\Services;
 use DateTime;
 use Illuminate\Http\Request;
@@ -22,9 +23,9 @@ class InvoicesController extends Controller
     public function index()
     {
         $finalIncome = [];
-        $invoices = Invoice::query()->where('date', '>=', date('Y').'-01-01')->get()->sortByDesc('invoiceID');
+        $invoices = Invoice::query()->where('date', '>=', date('Y').'-01-01')->get()->sortBy('invoiceID');
         foreach($invoices as $invoice) {
-            $finalIncome[] = getFinalPrices($invoice->invoiceID);
+            $finalIncome[] = getFinalPrices($invoice->hashID);
         }
         $final = array_sum($finalIncome);
 
@@ -40,18 +41,36 @@ class InvoicesController extends Controller
         $to = $toDate->format('Y-m-d');
 
         $finalIncome = [];
-        $invoices = Invoice::query()->where('date', '>=', $from)->where('date', '<=', $to)->get()->sortByDesc('invoiceID');
+        $invoices = Invoice::query()->where('date', '>=', $from)->where('date', '<=', $to)->get()->sortByDesc('date');
         foreach($invoices as $invoice) {
-            $finalIncome[] = getFinalPrices($invoice->invoiceID);
+            $finalIncome[] = getFinalPrices($invoice->hashID);
         }
         $final = array_sum($finalIncome);
         return view('invoices.index', ['invoices' => $invoices, 'dateStart' => $from, 'dateEnd' => $to, 'finals' => $final]);
     }
 
     public function view($invoiceID) {
-        $invoice = Invoice::query()->where('invoiceID', $invoiceID)->first();
+        $invoice = Invoice::query()->where('hashID', $invoiceID)->first();
 
-        return view('invoices.view', ['invoice' => $invoice]);
+        switch ($invoice->payment_method) {
+            case 1:
+                $payment = 'ΚΑΤΑΘΕΣΗ ΣΕ ΤΡΑΠΕΖΑ ΕΣΩΤΕΡΙΚΟΥ';
+                break;
+            case 2:
+                $payment = 'ΚΑΤΑΘΕΣΗ ΣΕ ΤΡΑΠΕΖΑ ΕΞΩΤΕΡΙΚΟΥ';
+                break;
+            case 3:
+                $payment = 'ΜΕΤΡΗΤΑ';
+                break;
+            case 4:
+                $payment = 'ΕΠΙΤΑΓΗ';
+                break;
+            case 5:
+                $payment = 'ΜΕ ΠΙΣΤΩΣΗ';
+                break;
+        }
+
+        return view('invoices.view', ['invoice' => $invoice, 'payment' => $payment]);
     }
 
     public function save($hashID)
@@ -71,11 +90,18 @@ class InvoicesController extends Controller
 
     public function new()
     {
-        $lastInvoice = Invoice::all()->sortBy('invoiceID')->last()->invoiceID;
+        $invoice = Invoice::query()->where('seira', '=', 'ANEY')->orWhere('seira', '=', 'ΑΝΕΥ')->latest('invoiceID')->first();
+
+        //dd($invoice);
         $clients = Client::all()->sortBy('company');
+        $seires = Seires::query()->where('type', '=', 'invoices')->get();
+        if($invoice) {
+            $lastInvoice = $invoice->invoiceID;
+        } else {
+            $lastInvoice = '';
+        }
 
-
-        return view('invoices.new', ['last' => $lastInvoice, 'clients' => $clients]);
+        return view('invoices.new', ['last' => $lastInvoice, 'clients' => $clients, 'seires' => $seires]);
     }
 
     public function download($hashID) {
@@ -90,6 +116,7 @@ class InvoicesController extends Controller
 
     public function store(Request $request)
     {
+//dd($request);
         $requestDate = DateTime::createFromFormat('d/m/Y', $request->date);
         if(!$requestDate) {
             $requestDate = DateTime::createFromFormat('Y-m-d', $request->date);
@@ -100,6 +127,7 @@ class InvoicesController extends Controller
         $services = $request->services;
 
         if(isset($request->paid)) { $paid = 1; } else { $paid = 0; }
+        if(isset($request->has_parakratisi)) { $parakratisi = 1; } else { $parakratisi = 0; }
 
         DB::table('invoices')->insert(
             array(
@@ -107,10 +135,13 @@ class InvoicesController extends Controller
                 'hashID' => Str::substr(Str::slug(Hash::make( $request->client.$request->invoiceID)), 0, 32),
                 'client_id' => $request->client,
                 'date' => $date,
-                'paid' => $paid
+                'paid' => $paid,
+                'seira' => $request->seira,
+                'has_parakratisi' => $parakratisi,
+                'payment_method' => $request->paymentMethod
             )
         );
-
+//dd($services);
         foreach($services as $serv) {
             if(array_key_exists('id', $serv)) {
                 $service = Services::query()->where('id', '=', $serv['id'])->first();
@@ -120,7 +151,8 @@ class InvoicesController extends Controller
             } else {
                 DB::table('services')->insert(
                     array(
-                        'invoice_number' => $request->invoiceID,
+                        'invoice_number' => getInvoiceHash($request->seira, $request->invoiceID),
+                        'client_id' => $request->client,
                         'price' => $serv['price'],
                         'quantity' => $serv['quantity'],
                         'description' => $serv['description']
@@ -158,37 +190,64 @@ class InvoicesController extends Controller
         }
     }
 
-    public function edit(Invoice $invoice)
+    public function edit($hashID)
     {
-
+        $invoice = Invoice::query()->where('hashID', '=', $hashID)->first();
         $clients = Client::all()->sortBy('company');
+        $seires = Seires::query()->where('type', '=', 'invoices')->get();
 
 
-        return view('invoices.new', ['last' => '', 'clients' => $clients, 'invoice' => $invoice]);
+        return view('invoices.new', ['last' => '', 'clients' => $clients, 'invoice' => $invoice, 'seires' => $seires]);
     }
 
     public function update(Request $request, Invoice $invoice)
     {
+        //dd($invoice);
         $requestDate = DateTime::createFromFormat('d/m/Y', $request->date);
         $date = $requestDate->format('Y-m-d');
         $services = $request->services;
+
+
+        if(isset($request->hasParakratisi)) {
+            $parakratisi = 1;
+        } else {
+            $parakratisi = 0;
+        }
 
         if(isset($request->paid)) { $paid = 1; } else { $paid = 0; }
         $invoice->update([
             'date' => $date,
             'client_id' => $request->client,
-            'paid' => $paid
+            'paid' => $paid,
+            'has_parakratisi' => $parakratisi,
+            'payment_method' => $request->paymentMethod
         ]);
         foreach($services as $service) {
-            DB::table('services')->where('id', $service['id'])->update([
-                'price' => $service['price'],
-                'quantity' => $service['quantity'],
-                'description' => $service['description']
-            ]);
+            if(isset($service['id'])) {
+
+                DB::table('services')->where('id', $service['id'])->update([
+                    'price' => $service['price'],
+                    'quantity' => $service['quantity'],
+                    'description' => $service['description'],
+                    'updated_at' => date('Y-m-d')
+                ]);
+            } else {
+                DB::table('services')->insert(
+                    [
+                        'invoice_number' => $invoice->hashID,
+                        'client_id' => $invoice->client->id,
+                        'price' => $service['price'],
+                        'quantity' => $service['quantity'],
+                        'description' => $service['description'],
+                        'created_at' => date('Y-m-d')
+                    ]
+                );
+            }
+
         }
 
         if(isset($request->sendInvoice)) {
-            myDataSendInvoices($invoice->invoiceID);
+            myDataSendInvoices('invoice', $invoice->hashID);
 
         }
 
@@ -211,7 +270,7 @@ class InvoicesController extends Controller
         $theInvoice = Invoice::query()->where('invoiceID', '=', $invoice)->first();
         //dd($theInvoice);
 
-        $an = myDataSendInvoices($invoice);
+        $an = myDataSendInvoices('invoice', $invoice);
         $aadeResponse = array();
         $xml = simplexml_load_string($an);
         foreach($xml->response as $aade) {
@@ -232,6 +291,7 @@ class InvoicesController extends Controller
 
         return Redirect::back()->with('notify', 'Το τιμολόγιο εστάλη!');
     }
+
     public function sendMyDataInvoices(Request $request)
     {
         foreach($request->ids as $invoice) {
@@ -255,5 +315,15 @@ class InvoicesController extends Controller
             }
         }
         return 'ok';
+    }
+
+    public function lastInvoiceAjax(Request $request) {
+        //return $request->seira;
+        $letter = $request->seira;
+        $last = Invoice::query()->where('seira', '=', $letter)->orderByDesc('invoiceID')->first();
+        if($last == null) {
+            return '00';
+        }
+        return $last->invoiceID + 1;
     }
 }

@@ -2,7 +2,11 @@
 @extends('layouts.contentLayoutMaster')
 
 {{-- page title --}}
-@section('title','Τιμολογίο m'.str_pad($invoice->invoiceID, 4, '0', STR_PAD_LEFT))
+@if($invoice->seira == 'ANEY' || $invoice->seira == 'ΑΝΕΥ')
+    @section('title','Τιμολογίο '.$invoice->invoiceID)
+@else
+    @section('title','Τιμολογίο '.$invoice->seira.' '.$invoice->invoiceID)
+@endif
 
 {{-- page styles --}}
 @section('page-style')
@@ -18,7 +22,12 @@
             <div class="row">
                 <div class="col s10 m6 l6">
                     <h5 class="breadcrumbs-title mt-0 mb-0">
-                        <span>Τιμολόγιο m{{str_pad($invoice->invoiceID, 4, '0', STR_PAD_LEFT)}}</span></h5>
+                        @if($invoice->seira == 'ANEY' || $invoice->seira == 'ΑΝΕΥ')
+                            <span>Τιμολόγιο {{$invoice->invoiceID}}</span>
+                        @else
+                            <span>Τιμολόγιο {{$invoice->seira.' '.$invoice->invoiceID}}</span>
+                        @endif
+                    </h5>
                 </div>
             </div>
         </div>
@@ -28,9 +37,11 @@
             <table class="invoiceform">
                 <tbody>
                 <tr class="no-border">
+                    @if(settings()->invoice_logo)
                     <td><img src="{{url('images/system/'.settings()->invoice_logo)}}"
                              alt="{{settings()->title}} logo"></td>
-                    <td class="tim-info">
+                    @endif
+                    <td class="tim-info @if(settings()->invoice_logo) right @else left @endif" style="text-align: left">
                         <h4 class="invoice-color">{{settings()->title}}</h4>
                         <h5 class="invoice-color">{{settings()->company}}</h5>
                         <p>{{settings()->business}}<br>{{settings()->address}}<br>Α.Φ.Μ.: {{settings()->vat}} -
@@ -43,10 +54,7 @@
                         </div>
                     </td>
                     <td>
-                        <p class="timNumber">ΤΙΜΟΛΟΓΙΟ ΠΑΡΟΧΗΣ ΥΠΗΡΕΣΙΩΝ | ΣΕΙΡΑ <span><strong
-                                    class="invoice-color">M</strong></span> | Αρ. Τιμολογίου <span>
-                                        <strong
-                                            class="invoice-color">{{str_pad($invoice->invoiceID, 4, '0', STR_PAD_LEFT)}}</strong></span>
+                        <p class="timNumber">ΤΙΜΟΛΟΓΙΟ ΠΑΡΟΧΗΣ ΥΠΗΡΕΣΙΩΝ | @if($invoice->seira != 'ANEY') Σειρά: <span><strong class="invoice-color">{{$invoice->seira}}</strong></span> @endif Αρ. Τιμολογίου <span><strong class="invoice-color">{{$invoice->invoiceID}}</strong></span>
                         </p>
                     </td>
                 </tr>
@@ -55,7 +63,7 @@
             <div class="clear"></div>
             <hr class="main-color">
             <div class="timClient">
-                <span class="invoice-color">Προς:</span>
+                <span class="invoice-color">Πελάτης:</span>
                 <strong>{{$invoice->client->company}}</strong><br>
                 {{$invoice->client->work_title}}<br>
                 {{$invoice->client->address. ' '. $invoice->client->number}}, {{chunk_split($invoice->client->postal_code, 3, ' ')}}<br>
@@ -64,14 +72,14 @@
                 <br>
             </div>
             <hr class="main-color">
+            @if(getFinalPrices($invoice->hashID) > 300 && $invoice->has_parakratisi == 1)
             <div class="paratiriseis">
-                <span class="invoice-color">Παρατηρήσεις:</span><br>
-                @if(getFinalPrices($invoice->invoiceID) >= 300)
+                <span class="invoice-color">Σημειώσεις:</span><br>
                     <div id="parakratisi">ΕΓΙΝΕ ΠΑΡΑΚΡΑΤΗΣΗ ΦΟΡΟΥ 20% ΙΣΗ ΜΕ
-                        € {{(20 / 100) * getFinalPrices($invoice->invoiceID)}} (ΕΥΡΩ)
+                        € {{(20 / 100) * getFinalPrices($invoice->hashID)}} (ΕΥΡΩ)
                     </div>
-                @endif
             </div>
+            @endif
             <div class="timTable small-12 columns">
                 <table>
                     <tbody>
@@ -97,32 +105,34 @@
                     <tr class="right-align">
                         <td colspan="2">ΣΥΝΟΛΟ ΑΞΙΩΝ:</td>
                         <td colspan="2" class="sinoloAxion" data-saprice="">
-                            € {{number_format(getFinalPrices($invoice->invoiceID), 2, ',', '.')}}</td>
+                            € {{number_format(getFinalPrices($invoice->hashID), 2, ',', '.')}}</td>
                     </tr>
                     <tr class="right-align">
                         <td colspan="2">Φ.Π.Α. <strong>(24%)</strong>:</td>
                         <td colspan="2" class="sinoloFpa">
-                            € {{number_format((24 / 100) * getFinalPrices($invoice->invoiceID), 2, ',', '.')}}</td>
+                            € {{number_format((24 / 100) * getFinalPrices($invoice->hashID), 2, ',', '.')}}</td>
                     </tr>
                     <tr class="right-align">
                         <td colspan="2">ΓΕΝΙΚΟ ΣΥΝΟΛΟ:</td>
                         <td colspan="2" class="sinoloGeniko">
-                            € {{number_format(getFinalPrices($invoice->invoiceID) + ((24 / 100) * getFinalPrices($invoice->invoiceID)), 2, ',', '.')}}</td>
+                            € {{number_format(getFinalPrices($invoice->hashID) + ((24 / 100) * getFinalPrices($invoice->hashID)), 2, ',', '.')}}</td>
                     </tr>
                     <tr class="right-align">
-                        <td colspan="2">ΠΛΗΡΩΤΕΟ ΠΟΣΟ:</td>
-                        <td colspan="2" class="pliroteoPoso">€ @if(getFinalPrices($invoice->invoiceID) > 300)
-                                {{number_format(getFinalPrices($invoice->invoiceID) - ((20 / 100) * getFinalPrices($invoice->invoiceID)) + ((24 / 100) * getFinalPrices($invoice->invoiceID)), 2, ',', '.')}} @else
-                                {{number_format(getFinalPrices($invoice->invoiceID) + ((24 / 100) * getFinalPrices($invoice->invoiceID)), 2, ',', '.')}}
-                            @endif</td>
+                        <td colspan="2"><strong>ΠΛΗΡΩΤΕΟ ΠΟΣΟ:</strong></td>
+                        <td colspan="2" class="pliroteoPoso"><strong>€ @if(getFinalPrices($invoice->hashID) > 300 && $invoice->has_parakratisi == 1)
+                                {{number_format(getFinalPrices($invoice->hashID) - ((20 / 100) * getFinalPrices($invoice->hashID)) + ((24 / 100) * getFinalPrices($invoice->hashID)), 2, ',', '.')}} @else
+                                {{number_format(getFinalPrices($invoice->hashID) + ((24 / 100) * getFinalPrices($invoice->hashID)), 2, ',', '.')}}
+                                @endif</strong></td>
                     </tr>
                     </tbody>
                 </table>
                 <div class="small-12 columns">
+                    @if(settings()->signature)
                     <div class="signature left">
                         <span class="invoice-color">Για τον εκδότη</span>
                         <img src="{{url('images/system/'.settings()->signature)}}" alt="signature">
                     </div>
+                    @endif
                     @if(isset($invoice->mark))
                     <div class="aade-mydata-mark">ΜΑΡΚ: {{$invoice->mark}}</div>
                     @endif
@@ -133,13 +143,15 @@
                             @if(settings()->phone)
                                 <td><span class="invoice-color">Τηλ:</span> {{settings()->phone}}</td>
                             @endif
+                            @if(settings()->email)
                             <td><span class="invoice-color">Email:</span> {{settings()->email}}</td>
+                                @endif
                             <td><span class="invoice-color">Χρήση:</span>ΠΕΛΑΤΗΣ</td>
                         </tr>
                         <tr>
                             <td><span class="invoice-color">Κιν:</span> {{settings()->mobile}}</td>
-                            <td><span class="invoice-color">Web:</span> wwww.sphereweb.gr</td>
-                            <td><span class="invoice-color">Πληρωμή:</span> ΜΕ ΠΙΣΤΩΣΗ</td>
+{{--                            <td><span class="invoice-color">Web:</span> wwww.sphereweb.gr</td>--}}
+                            <td><span class="invoice-color">Πληρωμή:</span> {{$payment}}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -163,13 +175,13 @@
                     </div>
                     @if(!$invoice->mark)
                     <div class="invoice-action-btn">
-                        <a href="{{route('invoice.edit', $invoice)}}" class="btn-block btn btn-light-indigo waves-effect waves-light">
+                        <a href="{{route('invoice.edit', $invoice->hashID)}}" class="btn-block btn btn-light-indigo waves-effect waves-light">
                             <i class="material-icons mr-4">edit</i>
                             <span>Επεξεργασία</span>
                         </a>
                     </div>
                     <div class="invoice-action-btn">
-                        <a href="{{route('invoice.mydata', $invoice->invoiceID)}}" class="btn-block btn btn-light-indigo waves-effect waves-light">
+                        <a href="{{route('invoice.mydata', $invoice->hashID)}}" class="btn-block btn btn-light-indigo waves-effect waves-light">
                             <i class="material-icons mr-4">backup</i>
                             <span>Αποστολή στο myData</span>
                         </a>
@@ -194,6 +206,23 @@
                         </a>
                     </div>
                 </div>
+            </div>
+            <div class="display-flex justify-content-center pb-2">
+                <form action="{{route('invoice.update-status', ['invoice' => $invoice->hashID])}}" method="get">
+                    @csrf
+                    <span class="center-align display-block">Πληρωμένο</span>
+                    <div class="switch center-align">
+                        <label>
+                            <input type="checkbox" name="paid" id="payed"
+                                   @if(isset($invoice->paid) && $invoice->paid == 1) checked @endif>
+                            <span class="lever"></span>
+                        </label>
+                    </div>
+                    <div class="invoice-action-btn payed-status-button" style="display: none">
+                        <input type="submit" value="Ενημέρωση Κατάστασης" style="color: #fff;width: 100%;margin-top: 20px;" class="btn">
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>
@@ -225,7 +254,9 @@
                 e.preventDefault();
                 $i('.payments-page').show();
             });
-
+            $i('#payed').on('change', function(){
+                $i('.payed-status-button').show();
+            });
         });
     </script>
 @endsection

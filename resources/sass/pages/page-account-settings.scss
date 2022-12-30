@@ -3,14 +3,14 @@
 /*  Account setting */
 /*-----------------*/
 .tabs-vertical {
-  & .media-body {
+  .media-body {
     /*media body in general tab*/
     flex-grow: 1;
     padding: 0 25px;
   }
 
   /* tabs*/
-  & .tabs {
+  .tabs {
     height: auto;
     flex-direction: column;
     display: flex;
@@ -18,12 +18,12 @@
     justify-content: flex-start;
     border-radius: 4px;
 
-    & .tab {
+    .tab {
       /* tab inside tabs*/
       width: 100%;
       text-align: start;
 
-      & a {
+      a {
         transition: none !important;
         color: $body-font-color;
 
@@ -41,7 +41,7 @@
           }
         }
 
-        & i {
+        i {
           /* icons */
           position: relative;
           top: 7px;
@@ -56,12 +56,12 @@
   }
 
   /* hide default indicator*/
-  & .indicator {
+  .indicator {
     display: none;
   }
 
   /*input file hide */
-  & .upfilewrapper {
+  .upfilewrapper {
     height: 0;
     width: 0;
     overflow: hidden;

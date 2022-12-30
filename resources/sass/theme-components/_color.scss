@@ -57,8 +57,8 @@
   @return 90deg - convert-angle($value, 'deg');
 }
 
-/// Mixin printing a linear-gradient
-/// as well as a plain color fallback
+/// Mixin printing a linear-gradient 
+/// as well as a plain color fallback 
 /// and the `-webkit-` prefixed declaration
 /// @access public
 /// @param {String | List | Angle} $direction - Linear gradient direction
@@ -120,8 +120,8 @@ $gradient-colors: (gradient-45deg-light-blue-teal: ('start-color' : color("light
     'end-color' : color("cyan", "accent-3"),
     'direction' : 45deg,
   ),
-  gradient-45deg-blue-grey-blue-grey: ('start-color' : color("blue", "darken-1"),
-    'end-color' : color("blue-grey", "lighten-4"),
+  gradient-45deg-blue-grey-blue-grey: ('start-color' : color("blue-grey", "lighten-4"),
+    'end-color' : color("blue-grey", "darken-1"),
     'direction' : 45deg,
   ),
   gradient-45deg-orange-amber: ('start-color' : color("orange", "darken-4"),
@@ -223,7 +223,7 @@ $gcolor in $gradient-colors {
   }
 }
 
-// light button
+// light button 
 @each $color_name,
 $color in $colors {
 

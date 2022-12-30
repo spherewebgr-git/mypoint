@@ -375,13 +375,13 @@ Trending Bar Chart
 
    // Create the chart
 
-   // window.onload = function () {
-   //    //revenueLineChart = new Chart(revenueLineChartCTX, revenueLineChartConfig);
-   //    //monthlyRevenueChart = new Chart(monthlyRevenueChartCTX, monthlyRevenueChartConfig);
-   //    var doughnutSalesChart = ''; //new Chart(doughnutSalesChartCTX, doughnutSalesChartConfig);
-   //    //browserStatsChart = new Chart(browserStatsChartCTX, browserStatsChartConfig);
-   //    var countryRevenueChart = ''; // new Chart(countryRevenueChartCTX, countryRevenueChartConfig);
-   // };
+   window.onload = function () {
+      //revenueLineChart = new Chart(revenueLineChartCTX, revenueLineChartConfig);
+      //monthlyRevenueChart = new Chart(monthlyRevenueChartCTX, monthlyRevenueChartConfig);
+      var doughnutSalesChart = new Chart(doughnutSalesChartCTX, doughnutSalesChartConfig);
+      //browserStatsChart = new Chart(browserStatsChartCTX, browserStatsChartConfig);
+      var countryRevenueChart = new Chart(countryRevenueChartCTX, countryRevenueChartConfig);
+   };
 
    $(function () {
       /*

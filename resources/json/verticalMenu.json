@@ -36,67 +36,23 @@
         },
         {
             "url": "javascript:void(0)",
-            "name": "Τιμολόγια",
-            "i18n": "Τιμολόγια",
+            "name": "Προμηθευτές",
+            "i18n": "Προμηθευτές",
             "class": "collapsible-header waves-effect waves-cyan",
-            "slug": "invoices",
-            "icon": "toc",
+            "slug": "providers",
+            "icon": "airport_shuttle",
             "submenu": [
                 {
-                    "url": "/invoices",
-                    "name": "Λίστα Τιμολογίων",
-                    "i18n": "Λίστα Τιμολογίων",
-                    "slug": "invoices"
+                    "url": "/providers",
+                    "name": "Λίστα Προμηθευττών",
+                    "i18n": "Λίστα Προμηθευττών",
+                    "slug": "providers"
                 },
                 {
-                    "url": "/create-invoice",
-                    "name": "Νέο Τιμολόγιο",
-                    "i18n": "Νέο Τιμολόγιο",
-                    "slug": "add-invoice"
-                }
-            ]
-        },
-        {
-            "url": "javascript:void(0)",
-            "name": "Παραστατικά Εξόδων",
-            "i18n": "Παραστατικά Εξόδων",
-            "class": "collapsible-header waves-effect waves-cyan",
-            "slug": "outcomes",
-            "icon": "zoom_out_map",
-            "submenu": [
-                {
-                    "url": "/outcomes",
-                    "name": "Λίστα Παραστατικών",
-                    "i18n": "Λίστα Παραστατικών",
-                    "slug": "outcomes"
-                },
-                {
-                    "url": "/create-outcome",
-                    "name": "Νέο Παραστατικό",
-                    "i18n": "Νέο Παραστατικό",
-                    "slug": "create-outcome"
-                }
-            ]
-        },
-        {
-            "url": "javascript:void(0)",
-            "name": "Αποδείξεις Λιανικής",
-            "i18n": "Αποδείξεις Λιανικής",
-            "class": "collapsible-header waves-effect waves-cyan",
-            "slug": "retail-receipts",
-            "icon": "receipt",
-            "submenu": [
-                {
-                    "url": "/retail-receipts",
-                    "name": "Αποδείξεις Λιανικής",
-                    "i18n": "Αποδείξεις Λιανικής",
-                    "slug": "retail-receipts"
-                },
-                {
-                    "url": "/create-retail-receipt",
-                    "name": "Νέα Απόδειξη Λιανικής",
-                    "i18n": "Νέα Απόδειξη Λιανικής",
-                    "slug": "add-retail-receipt"
+                    "url": "/add-provider",
+                    "name": "Προσθήκη Προμηθευτή",
+                    "i18n": "Προσθήκη Προμηθευτή",
+                    "slug": "add-client"
                 }
             ]
         },
@@ -129,6 +85,101 @@
             "class": "collapsible-header waves-effect waves-cyan",
             "slug": "settings",
             "icon": "settings"
+        },
+        {
+            "navheader": "ΠΑΡΑΣΤΑΤΙΚΑ ",
+            "icon": "more_horiz"
+        },
+        {
+            "url": "javascript:void(0)",
+            "name": "Τιμολόγια Παροχής",
+            "i18n": "Τιμολόγια Παροχής",
+            "class": "collapsible-header waves-effect waves-cyan",
+            "slug": "invoices",
+            "icon": "toc",
+            "submenu": [
+                {
+                    "url": "/invoices",
+                    "name": "Λίστα Τιμολογίων",
+                    "i18n": "Λίστα Τιμολογίων",
+                    "slug": "invoices"
+                },
+                {
+                    "url": "/create-invoice",
+                    "name": "Νέο Τιμολόγιο",
+                    "i18n": "Νέο Τιμολόγιο",
+                    "slug": "add-invoice"
+                }
+            ]
+        },
+        {
+            "url": "javascript:void(0)",
+            "name": "Τιμολόγια Πώλησης",
+            "i18n": "Τιμολόγια Πώλησης",
+            "class": "collapsible-header waves-effect waves-cyan",
+            "slug": "sale_invoices",
+            "icon": "local_grocery_store",
+            "submenu": [
+                {
+                    "url": "/sale-invoices",
+                    "name": "Λίστα Τιμολογίων",
+                    "i18n": "Λίστα Τιμολογίων",
+                    "slug": "invoices"
+                },
+                {
+                    "url": "/create-sale-invoice",
+                    "name": "Νέο Τιμολόγιο",
+                    "i18n": "Νέο Τιμολόγιο",
+                    "slug": "add-invoice"
+                }
+            ]
+        },
+        {
+            "url": "javascript:void(0)",
+            "name": "Αποδείξεις Λιανικής",
+            "i18n": "Αποδείξεις Λιανικής",
+            "class": "collapsible-header waves-effect waves-cyan",
+            "slug": "retails",
+            "icon": "receipt",
+            "submenu": [
+                {
+                    "url": "/retail-receipts",
+                    "name": "Αποδείξεις Λιανικής",
+                    "i18n": "Αποδείξεις Λιανικής",
+                    "slug": "retail-receipts"
+                },
+                {
+                    "url": "/create-retail-receipt",
+                    "name": "Νέα Απόδειξη Λιανικής",
+                    "i18n": "Νέα Απόδειξη Λιανικής",
+                    "slug": "add-retail-receipt"
+                }
+            ]
+        },{
+            "navheader": "ΛΟΓΙΣΤΙΚΑ ",
+            "icon": "more_horiz"
+        },
+        {
+            "url": "javascript:void(0)",
+            "name": "Χαρακτηρισμοί Εξόδων",
+            "i18n": "Χαρακτηρισμοί Εξόδων",
+            "class": "collapsible-header waves-effect waves-cyan",
+            "slug": "outcomes",
+            "icon": "zoom_out_map",
+            "submenu": [
+                {
+                    "url": "/outcomes",
+                    "name": "Λίστα Παραστατικών",
+                    "i18n": "Λίστα Παραστατικών",
+                    "slug": "outcomes"
+                },
+                {
+                    "url": "/create-outcome",
+                    "name": "Νέο Παραστατικό",
+                    "i18n": "Νέο Παραστατικό",
+                    "slug": "create-outcome"
+                }
+            ]
         }
     ]
 }

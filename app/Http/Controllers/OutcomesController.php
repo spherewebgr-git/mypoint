@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Outcomes;
+use App\Models\Provider;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +36,9 @@ class OutcomesController extends Controller
 
     public function new()
     {
-        return view('outcomes.new');
+        $providers = Provider::all();
+
+        return view('outcomes.new', ['providers' => $providers]);
     }
 
     public function store(Request $request)
@@ -53,6 +56,7 @@ class OutcomesController extends Controller
             $name = str_replace([' ', '/', '\\'], '_', $request->file('file')->getClientOriginalName());
             $path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, 'public' . DIRECTORY_SEPARATOR . 'outcomes' . DIRECTORY_SEPARATOR . $year . DIRECTORY_SEPARATOR . $month);
             File::ensureDirectoryExists(storage_path('app') . DIRECTORY_SEPARATOR . $path);
+          //  dd(storage_path('app') . DIRECTORY_SEPARATOR . $path);
             $request->file('file')->storeAs($path, $name);
         } else {
             $name = '';
@@ -61,7 +65,9 @@ class OutcomesController extends Controller
         DB::table('outcomes')->insert(
             array(
                 'hashID' => Str::substr(Str::slug(Hash::make($request->shop . $request->outcome_number)), 0, 32),
+                'seira' => $request->seira,
                 'outcome_number' => $request->outcome_number,
+                'invType' => $request->invType,
                 'shop' => $request->shop,
                 'date' => $date,
                 'price' => $request->price,
@@ -116,11 +122,25 @@ class OutcomesController extends Controller
 
     public function edit(Outcomes $outcome)
     {
-        return view('outcomes.new', ['outcome' => $outcome]);
+        $providers = Provider::all();
+        $classPrices = [];
+        $classifications = DB::table('retail_classifications')->where('outcome_hash','=', $outcome->hashID)->get();
+
+        foreach($classifications as $class) {
+            $classPrices[] = $class->price;
+        }
+
+        $currentPrice = array_sum($classPrices);
+
+        //dd($classifications);
+        return view('outcomes.new', ['outcome' => $outcome, 'providers' => $providers, 'classifications' => $classifications, 'classifiedPrice' => $currentPrice]);
     }
 
     public function update(Request $request, Outcomes $outcome)
     {
+       // dd($request);
+
+        //$requestDate = $request->date;
         $requestDate = DateTime::createFromFormat('d/m/Y', $request->date);
         if(!$requestDate) {
             $requestDate = DateTime::createFromFormat('Y-m-d', $request->date);
@@ -136,7 +156,9 @@ class OutcomesController extends Controller
             $name = $outcome->file;
         }
         $outcome->update([
+            'seira' => $request->seira,
             'outcome_number' => $request->outcome_number,
+            'invType' => $request->invType,
             'shop' => $request->shop,
             'date' => $date,
             'price' => $request->price,
